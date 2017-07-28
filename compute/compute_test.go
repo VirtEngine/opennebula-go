@@ -1,10 +1,9 @@
 package compute
-/*
+
 import (
-	"fmt"
-	"testing"
 	"github.com/megamsys/opennebula-go/api"
 	"gopkg.in/check.v1"
+	"testing"
 )
 
 func Test(t *testing.T) {
@@ -21,11 +20,11 @@ func (s *S) SetUpSuite(c *check.C) {
 	cm := make(map[string]string)
 	cm[api.ENDPOINT] = "http://192.168.0.118:2633/RPC2"
 	cm[api.USERID] = "oneadmin"
-	cm[api.PASSWORD] = "WuedmopFupt6"
+	cm[api.PASSWORD] = "oneadmin"
 	s.cm = cm
 }
 
-
+/*
 func (s *S) TestCreate(c *check.C) {
 	cl, _ := api.NewClient(s.cm)
 	v := VirtualMachine {
@@ -34,10 +33,10 @@ func (s *S) TestCreate(c *check.C) {
 		Cpu: "1",
 		Memory: "1024",
 		Image: "megam",
-		ClusterId: "101" ,
+		ClusterId: "100" ,
 		T: cl,
 		ContextMap: map[string]string{"assembly_id": "ASM-007", "assemblies_id": "AMS-007", ACCOUNTS_ID: "info@megam.io"},
-		Vnets:map[string]string{"0":"ipv4-pri"},
+		Vnets:map[string]string{"0":"ipv4-pub"},
 		} //memory in terms of MB! duh!
 
 	c.Assert(v, check.NotNil)
@@ -47,6 +46,30 @@ func (s *S) TestCreate(c *check.C) {
 	err = nil
 	c.Assert(err, check.NotNil)
 }
+*/
+
+// func (s *S) TestCreateWithOldIP(c *check.C) {
+// 	cl, _ := api.NewClient(s.cm)
+// 	v := VirtualMachine {
+// 		Name: "testmegam4",
+// 		TemplateName: "megam",
+// 		Cpu: "1",
+// 		Memory: "1024",
+// 		Image: "megam",
+// 		ClusterId: "100" ,
+// 		T: cl,
+// 		ContextMap: map[string]string{"assembly_id": "ASM-007", "assemblies_id": "AMS-007", ACCOUNTS_ID: "info@megam.io"},
+// 		Vnets:map[string]string{"0":"ipv4-pub"},
+// 		} //memory in terms of MB! duh!
+//
+// 	c.Assert(v, check.NotNil)
+// 	cm, err := v.Compute()
+//   res, err := v.Create(cm)
+// 	fmt.Println("res  :",res)
+// 	fmt.Println(err)
+// 	err = nil
+// 	c.Assert(err, check.NotNil)
+// }
 /*
 
 func (s *S) TestReboot(c *check.C) {
@@ -83,12 +106,12 @@ func (s *S) TestPoweroffKVM(c *check.C) {
 
 func (s *S) TestDelete(c *check.C) {
 	cl, _ := api.NewClient(s.cm)
-	v := VirtualMachine{Name: "testmegam", T: cl}
+	v := VirtualMachine{VMId: 77, T: cl}
 	c.Assert(v, check.NotNil)
 	_, err := v.Delete()
-	c.Assert(err, check.IsNil)
+	c.Assert(nil, check.NotNil)
 }
-
+/*
 func (s *S) TestDiskSnap(c *check.C) {
 	cl, _ := api.NewClient(s.cm)
 	v := VirtualMachine{Name: "rj",T: cl}
@@ -96,5 +119,6 @@ func (s *S) TestDiskSnap(c *check.C) {
 	_, err := v.DiskSnap()
 	c.Assert(err, check.IsNil)
 }
+
 
 */

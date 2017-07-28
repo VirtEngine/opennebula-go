@@ -21,6 +21,7 @@ type VmTemplate struct {
 type Disk struct {
 	Disk_Id    int    `xml:"DISK_ID"`
 	Disk_Type  string `xml:"TYPE"`
+	Image      string `xml:"IMAGE"`
 	Dev_Prefix string `xml:"DEV_PREFIX"`
 	Size       string `xml:"SIZE"`
 	Target     string `xml:"TARGET"`
@@ -39,9 +40,8 @@ func (v *VmDisk) AttachDisk() (interface{}, error) {
 	data := string(finalData)
 	args := []interface{}{v.T.Key, v.VmId, data}
 	res, err := v.T.Call(api.DISK_ATTACH, args)
-	defer v.T.Client.Close()
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	return res, err
 
@@ -50,9 +50,8 @@ func (v *VmDisk) AttachDisk() (interface{}, error) {
 func (v *VmDisk) DetachDisk() (interface{}, error) {
 	args := []interface{}{v.T.Key, v.VmId, v.Vm.Disk.Disk_Id}
 	res, err := v.T.Call(api.DISK_DETACH, args)
-	defer v.T.Client.Close()
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	return res, err
 
@@ -61,7 +60,6 @@ func (v *VmDisk) DetachDisk() (interface{}, error) {
 func (v *VmDisk) ListDisk() (*Vm, error) {
 	args := []interface{}{v.T.Key, v.VmId}
 	onevm, err := v.T.Call(api.VM_INFO, args)
-	defer v.T.Client.Close()
 	if err != nil {
 		return nil, err
 	}

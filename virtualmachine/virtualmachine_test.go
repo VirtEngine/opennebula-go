@@ -1,44 +1,45 @@
 package virtualmachine
 
-import (
-	"github.com/megamsys/opennebula-go/api"
-	"gopkg.in/check.v1"
-	"testing"
-)
-
-func Test(t *testing.T) {
-	check.TestingT(t)
-}
-
-type S struct {
-	cm map[string]string
-}
-
-var _ = check.Suite(&S{})
-
-func (s *S) SetUpSuite(c *check.C) {
-	cm := make(map[string]string)
-	cm[api.ENDPOINT] = "http://192.168.0.118:2633/RPC2"
-	cm[api.USERID] = "oneadmin"
-	cm[api.PASSWORD] = "WuedmopFupt6"
-	s.cm = cm
-}
-
+// import (
+// 	"github.com/megamsys/opennebula-go/api"
+// 	"gopkg.in/check.v1"
+//   "fmt"
+// )
 
 // func (s *S) TestGetByName(c *check.C) {
 // 	client, _ := api.NewClient(s.cm)
 // 	vm := Query{VMName: "kvm109", T: client}
 // 	_, err := vm.GetByName()
-// 		fmt.Println(err)
-// 	c.Assert(err, check.NotNil)
+// 	c.Assert(err, check.IsNil)
 // }
 
-/*
-func (s *S) TestGetByPort(c *check.C) {
-	client, _ := api.NewClient(s.cm)
-	vm := Vnc{ T: client, VmId: "743" }
-	b, err := vm.GetVm()
-	fmt.Println(b)
-	c.Assert(err, check.NotNil)
-}
-*/
+// func (s *S) TestGet(c *check.C) {
+// 	client, _ := api.NewClient(s.cm)
+// 	vm := Vnc{T: client, VmId: "8"}
+// 	_, err := vm.GetVm()
+// 	c.Assert(err, check.IsNil)
+// }
+
+//
+// func (s *S) TestGetVMTemplate(c *check.C) {
+// 	client, _ := api.NewClient(s.cm)
+// 	vm := Vnc{VmId: "177", T: client}
+// 	_, err := vm.GetVm()
+// 	c.Assert(err, check.IsNil)
+// }
+//
+// func (s *S) TestAttachNic(c *check.C) {
+// 	client, _ := api.NewClient(s.cm)
+//   vm := Vnc{VmId: "108", T: client}
+//   err := vm.AttachNic("public-1", "192.168.0.102")
+//   fmt.Println(err)
+// 	c.Assert(nil, check.NotNil)
+// }
+
+// func (s *S) TestDetachNic(c *check.C) {
+// 	client, _ := api.NewClient(s.cm)
+//   vm := Vnc{VmId: "425", T: client}
+// 	nic := 3
+//   err := vm.DetachNic(nic)
+// 	c.Assert(err, check.IsNil)
+// }

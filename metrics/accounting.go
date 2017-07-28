@@ -3,8 +3,15 @@ package metrics
 import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/megamsys/opennebula-go/api"
+	vm "github.com/megamsys/opennebula-go/virtualmachine"
 	"strconv"
 	"time"
+)
+
+const (
+	DISKS  = "disks"
+	MEMORY = "memory"
+	CPU    = "cpu"
 )
 
 type Accounting struct {
@@ -13,54 +20,14 @@ type Accounting struct {
 	EndTime   int64
 }
 
-func (a *Accounting) Get() (interface{}, error) {
-	log.Debugf("showback Get (%d, %d) started", a.StartTime, a.EndTime)
-	args := []interface{}{a.Api.Key, -2, -1, a.StartTime, a.EndTime}
-	res, err := a.Api.Call(api.VMPOOL_ACCOUNTING, args)
-	if err != nil {
-		return nil,err
-	}
-	return res, nil
-}
-
-type VmState int
-type LcmState int
-
-const (
-	//VmState starts at 0
-	INIT VmState = iota
-	PENDING
-	HOLD
-	ACTIVE
-	STOPPED
-	SUSPENDED
-	DONE
-	FAILED
-
-	//LcmState starts at 0
-	LCM_INIT LcmState = iota
-	PROLOG
-	BOOT
-	RUNNING
-	MIGRATE
-	SAVE_STOP
-	SAVE_SUSPEND
-	SAVE_MIGRATE
-	PROLOG_MIGRATE
-	PROLOG_RESUME
-	EPILOG_STOP
-	EPILOG
-	SHUTDOWN
-	CANCEL
-	FAILURE
-	CLEANUP
-	UNKNOWN
-)
-
 type History struct {
 	HostName string `xml:"HOSTNAME"`
-	Stime    string `xml:"STIME"`
-	Etime    string `xml:"ETIME"`
+	Stime    int64  `xml:"STIME"`
+	Etime    int64  `xml:"ETIME"`
+	PStime   int64  `xml:"PSTIME"`
+	PEtime   int64  `xml:"PETIME"`
+	RStime   int64  `xml:"RSTIME"`
+	REtime   int64  `xml:"RETIME"`
 	VM       *VM    `xml:"VM"`
 }
 
@@ -68,8 +35,8 @@ type VM struct {
 	Name      string    `xml:"NAME"`
 	State     string    `xml:"STATE"`
 	Lcm_state string    `xml:"LCM_STATE"`
-	Stime     string    `xml:"STIME"`
-	Etime     string    `xml:"ETIME"`
+	Stime     int64     `xml:"STIME"`
+	Etime     int64     `xml:"ETIME"`
 	Template  *Template `xml:"TEMPLATE"`
 }
 
@@ -77,10 +44,16 @@ type Template struct {
 	Context     Context `xml:"CONTEXT"`
 	Cpu         string  `xml:"CPU"`
 	Cpu_cost    string  `xml:"CPU_COST"`
+	Disks       []Disk  `xml:"DISK"`
 	Vcpu        string  `xml:"VCPU"`
 	Memory      string  `xml:"MEMORY"`
 	Memory_cost string  `xml:"MEMORY_COST"`
-	Disk_size   string  `xml:"SIZE"`
+	Disk_cost   string  `xml:"DISK_COST"`
+}
+
+type Disk struct {
+	DiskId string `xml:"DISK_ID"`
+	Size   int64  `xml:"SIZE"`
 }
 
 type Context struct {
@@ -88,14 +61,29 @@ type Context struct {
 	Accounts_id   string `xml:"ACCOUNTS_ID"`
 	Assembly_id   string `xml:"ASSEMBLY_ID"`
 	Assemblies_id string `xml:"ASSEMBLIES_ID"`
+	Quota_id      string `xml:"QUOTA_ID"`
 }
 
 type OpenNebulaStatus struct {
 	History_Records []*History `xml:"HISTORY"`
 }
 
+func (a *Accounting) Get() (interface{}, error) {
+	log.Debugf("showback Get (%d, %d) started", a.StartTime, a.EndTime)
+	args := []interface{}{a.Api.Key, -2, a.StartTime, a.EndTime}
+	res, err := a.Api.Call(api.VMPOOL_ACCOUNTING, args)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 func (h *History) Cpu() string {
 	return h.VM.Template.Cpu
+}
+
+func (h *History) VCpu() string {
+	return h.VM.Template.Vcpu
 }
 
 func (h *History) CpuCost() string {
@@ -110,6 +98,22 @@ func (h *History) MemoryCost() string {
 	return h.VM.Template.Memory_cost
 }
 
+func (h *History) DiskSize() int64 {
+	var totalsize int64
+	for _, v := range h.VM.Template.Disks {
+		totalsize = totalsize + v.Size
+	}
+	return totalsize
+}
+
+func (h *History) Disks() []Disk {
+	return h.VM.Template.Disks
+}
+
+func (h *History) DiskCost() string {
+	return h.VM.Template.Disk_cost
+}
+
 func (h *History) AssemblyName() string {
 	return h.VM.Name
 }
@@ -120,6 +124,10 @@ func (h *History) AccountsId() string {
 
 func (h *History) AssembliesId() string {
 	return h.VM.Template.Context.Assemblies_id
+}
+
+func (h *History) QuotaId() string {
+	return h.VM.Template.Context.Quota_id
 }
 
 func (h *History) AssemblyId() string {
@@ -134,15 +142,8 @@ func (h *History) LcmState() string {
 	return h.VM.lcmStateString()
 }
 
-func TimeAsInt64(tm string) int64 {
-	if i, err := strconv.ParseInt(tm, 10, 64); err != nil {
-		return i
-	}
-	return 0
-}
-
 func (h *History) Elapsed() string {
-	return strconv.FormatFloat(time.Since(time.Unix(TimeAsInt64(h.VM.Stime), 0)).Hours(), 'E', -1, 64)
+	return strconv.FormatFloat(time.Since(time.Unix(h.VM.Stime, 0)).Hours(), 'E', -1, 64)
 }
 
 func (v *VM) stateAsInt(s string) int {
@@ -153,62 +154,9 @@ func (v *VM) stateAsInt(s string) int {
 }
 
 func (v *VM) stateString() string {
-	switch VmState(v.stateAsInt(v.State)) {
-	case INIT:
-		return "Init"
-	case PENDING:
-		return "Pending"
-	case HOLD:
-		return "Hold"
-	case ACTIVE:
-		return "Active"
-	case STOPPED:
-		return "Stopped"
-	case SUSPENDED:
-		return "Suspended"
-	case DONE:
-		return "Done"
-	case FAILED:
-		return "Failed"
-	default:
-	}
-	return "Unknown"
+	return vm.VmStateString[vm.VmState(v.stateAsInt(v.State))]
 }
+
 func (v *VM) lcmStateString() string {
-	switch LcmState(v.stateAsInt(v.Lcm_state)) {
-	case LCM_INIT:
-		return "Lcm Init"
-	case PROLOG:
-		return "Prolog"
-	case BOOT:
-		return "Boot"
-	case RUNNING:
-		return "Running"
-	case MIGRATE:
-		return "Migrate"
-	case SAVE_STOP:
-		return "Save stop"
-	case SAVE_SUSPEND:
-		return "Save suspend"
-	case SAVE_MIGRATE:
-		return "Save migrate"
-	case PROLOG_MIGRATE:
-		return "Prolog migrate"
-	case PROLOG_RESUME:
-		return "Prolog resume"
-	case EPILOG_STOP:
-		return "Eplilog stop"
-	case EPILOG:
-		return "Epilog"
-	case SHUTDOWN:
-		return "Shutdown"
-	case CANCEL:
-		return "Cancel"
-	case FAILURE:
-		return "Failure"
-	case CLEANUP:
-		return "Cleanup"
-	default:
-		return "Unknown"
-	}
+	return vm.LcmStateString[vm.LcmState(v.stateAsInt(v.Lcm_state))]
 }
