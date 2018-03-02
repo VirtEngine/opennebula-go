@@ -1,7 +1,7 @@
 package snapshot
 
 import (
-	"github.com/megamsys/opennebula-go/api"
+	"github.com/virtengine/opennebula-go/api"
 )
 
 type Snapshot struct {

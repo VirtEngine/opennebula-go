@@ -4,7 +4,7 @@ import (
 	"errors"
 	log "github.com/Sirupsen/logrus"
 	"github.com/kolo/xmlrpc"
-	"github.com/megamsys/libgo/cmd"
+	"github.com/virtengine/libgo/cmd"
 	"strconv"
 	"strings"
 )

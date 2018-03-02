@@ -1,7 +1,7 @@
 package users
 
 import (
-	"github.com/megamsys/opennebula-go/api"
+	"github.com/virtengine/opennebula-go/api"
 )
 
 type UserTemplate struct {

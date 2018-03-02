@@ -8,8 +8,8 @@ OpenNebula golang API
 Example:-
 
 import (
-  "github.com/megamsys/opennebula-go/api"
-  "github.com/megamsys/opennebula-go/compute"
+  "github.com/virtengine/opennebula-go/api"
+  "github.com/virtengine/opennebula-go/compute"
   "fmt"
   )
 func main() {

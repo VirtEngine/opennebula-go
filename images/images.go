@@ -3,7 +3,7 @@ package images
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/megamsys/opennebula-go/api"
+	"github.com/virtengine/opennebula-go/api"
 )
 
 type ImageType string

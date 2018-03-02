@@ -3,9 +3,9 @@ package compute
 import (
 	"encoding/xml"
 	"errors"
-	"github.com/megamsys/opennebula-go/api"
-	"github.com/megamsys/opennebula-go/template"
-	"github.com/megamsys/opennebula-go/virtualmachine"
+	"github.com/virtengine/opennebula-go/api"
+	"github.com/virtengine/opennebula-go/template"
+	"github.com/virtengine/opennebula-go/virtualmachine"
 )
 
 var (
