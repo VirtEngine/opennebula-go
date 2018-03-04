@@ -2,7 +2,7 @@ package virtualmachine
 
 import (
 	"encoding/xml"
-	"github.com/megamsys/opennebula-go/api"
+	"github.com/virtengine/opennebula-go/api"
 	"strconv"
 	"strings"
 )

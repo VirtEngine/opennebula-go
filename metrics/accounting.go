@@ -2,8 +2,8 @@ package metrics
 
 import (
 	log "github.com/Sirupsen/logrus"
-	"github.com/megamsys/opennebula-go/api"
-	vm "github.com/megamsys/opennebula-go/virtualmachine"
+	"github.com/virtengine/opennebula-go/api"
+	vm "github.com/virtengine/opennebula-go/virtualmachine"
 	"strconv"
 	"time"
 )

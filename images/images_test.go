@@ -1,7 +1,7 @@
 package images
 
 import (
-	"github.com/megamsys/opennebula-go/api"
+	"github.com/virtengine/opennebula-go/api"
 	"gopkg.in/check.v1"
 	"testing"
 	//	"fmt"

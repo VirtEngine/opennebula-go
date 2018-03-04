@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"github.com/megamsys/opennebula-go/api"
+	"github.com/virtengine/opennebula-go/api"
 )
 
 var (
