@@ -1,19 +1,17 @@
-================
-OpenNebula API
-===============
+# OpenNebula API
 
-OpenNebula golang API
+OpenNebula Golang API
 
+Example:
 
-Example:-
-
+```go
 import (
   "github.com/virtengine/opennebula-go/api"
   "github.com/virtengine/opennebula-go/compute"
   "fmt"
-  )
+)
+
 func main() {
-  
   cm := make(map[string]string)
 	cm[api.ENDPOINT] = "http://192.168.0.118:2633/RPC2"
 	cm[api.USERID] = "oneadmin"
@@ -28,11 +26,20 @@ func main() {
     Image: "megam",
     ClusterId: "100" ,
     T: cl,
-    ContextMap: map[string]string{"assembly_id": "ASM-007", "assemblies_id": "AMS-007", ACCOUNTS_ID: "info@megam.io"},
-    Vnets:map[string]string{"0":"ipv4-pub"},
-    } //memory in terms of MB! duh!
+    ContextMap: map[string]string{
+      "assembly_id": "ASM-007",
+      "assemblies_id": "AMS-007",
+      ACCOUNTS_ID: "info@megam.io",
+    },
+    Vnets: map[string]string{"0": "ipv4-pub"},
+  } //memory in terms of MB! duh!
 
-   response, err := v.Create()
+  tmp, err := v.Compute()
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  response, err := v.Create(tmp)
    if err != nil {
      // handle error
    }
@@ -40,3 +47,4 @@ func main() {
    vmid := response.(string)
    fmt.Println("VirtualMachine created successfully")
 }
+```
