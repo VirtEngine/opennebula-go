@@ -3,6 +3,7 @@ package compute
 import (
 	"encoding/xml"
 	"errors"
+
 	"github.com/virtengine/opennebula-go/api"
 	"github.com/virtengine/opennebula-go/template"
 	"github.com/virtengine/opennebula-go/virtualmachine"

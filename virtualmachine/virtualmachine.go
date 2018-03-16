@@ -2,9 +2,11 @@ package virtualmachine
 
 import (
 	"encoding/xml"
-	"github.com/virtengine/opennebula-go/api"
 	"strconv"
 	"strings"
+
+	"github.com/virtengine/opennebula-go/api"
+	"github.com/virtengine/opennebula-go/template"
 )
 
 const (
@@ -131,6 +133,15 @@ func (v *Vnc) DetachNic(nic int) error {
 	id, _ := strconv.Atoi(v.VmId)
 	args := []interface{}{v.T.Key, id, nic}
 	_, err := v.T.Call(api.ONE_VM_DETACHNIC, args)
+	return err
+}
+
+func (v *Vnc) Resize(tmp template.UserTemplates, enforce bool) error {
+	id, _ := strconv.Atoi(v.VmId)
+	finalData, _ := xml.Marshal(tmp.UserTemplate[0].Template)
+	data := string(finalData)
+	args := []interface{}{v.T.Key, id, data, enforce}
+	_, err := v.T.Call(api.ONE_VM_RESIZE, args)
 	return err
 }
 

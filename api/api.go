@@ -2,11 +2,12 @@ package api
 
 import (
 	"errors"
+	"strconv"
+	"strings"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/kolo/xmlrpc"
 	"github.com/virtengine/libgo/cmd"
-	"strconv"
-	"strings"
 )
 
 const (
@@ -68,6 +69,7 @@ const (
 	VMPOOL_INFO          = "one.vmpool.info"
 	ONE_VM_ATTACHNIC     = "one.vm.attachnic"
 	ONE_VM_DETACHNIC     = "one.vm.detachnic"
+	ONE_VM_RESIZE        = "one.vm.resize"
 
 	// template action methods
 	TEMPLATE_INSTANTIATE  = "one.template.instantiate"
