@@ -216,6 +216,14 @@ func (v *VirtualMachine) RecoverDelete() (interface{}, error) {
 	return v.T.Call(api.ONE_RECOVER, []interface{}{v.T.Key, v.VMId, RECOVER_FORCE_DELETE})
 }
 
+// Resize the virtual machine
+func (v *VirtualMachine) Resize(tmp *template.Template, enforce bool) error {
+	finalData, _ := xml.Marshal(tmp)
+	args := []interface{}{v.T.Key, v.VMId, string(finalData), enforce}
+	_, err := v.T.Call(api.ONE_VM_RESIZE, args)
+	return err
+}
+
 /**
  * VM save as a new Image (DISK_SNAPSHOT)
  **/
