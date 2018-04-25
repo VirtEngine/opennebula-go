@@ -217,11 +217,11 @@ func (v *VirtualMachine) RecoverDelete() (interface{}, error) {
 }
 
 // Resize the virtual machine
-func (v *VirtualMachine) Resize(tmp *template.Template, enforce bool) error {
+func (v *VirtualMachine) Resize(cpu, memory string, enforce bool) (interface{}, error) {
+	tmp := &template.Template{Cpu: cpu, Memory: memory}
 	finalData, _ := xml.Marshal(tmp)
 	args := []interface{}{v.T.Key, v.VMId, string(finalData), enforce}
-	_, err := v.T.Call(api.ONE_VM_RESIZE, args)
-	return err
+	return v.T.Call(api.ONE_VM_RESIZE, args)
 }
 
 /**
